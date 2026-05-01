@@ -1,24 +1,24 @@
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { AuthProvider } from '@/context/AuthContext';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
-  // La pantalla ancla por defecto cuando no hay ruta es (auth)/login
-  anchor: '(auth)',
+  anchor: '(tabs)',
 };
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
   return (
-    <AuthProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(app)" />
-        {/* Redirige la ruta raíz a (auth)/login */}
-        <Stack.Screen name="index" redirect />
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
-      <StatusBar style="light" />
-    </AuthProvider>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }
