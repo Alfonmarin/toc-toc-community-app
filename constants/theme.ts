@@ -16,6 +16,8 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    primaryGreen: '#5A9C4A', // Botón iniciar sesión
+    lightGreenBackground: '#E9F2E6', // Círculos de fondo
   },
   dark: {
     text: '#ECEDEE',
@@ -24,6 +26,8 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    primaryGreen: '#5A9C4A',
+    lightGreenBackground: '#E9F2E6',
   },
 };
 
