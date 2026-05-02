@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import RegisterHeader from '@/components/RegisterHeader';
@@ -12,6 +12,16 @@ const emailImage = require('@/assets/images/sobreArroba.png');
 
 export default function Step2Screen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const [email, setEmail] = useState('');
+
+  const handleNext = () => {
+    if (!email.trim() || !email.includes('@')) return;
+    router.push({
+      pathname: '/register/step3',
+      params: { ...params, email: email.toLowerCase().trim() }
+    });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
@@ -29,13 +39,20 @@ export default function Step2Screen() {
         </Text>
 
         <View style={styles.formContainer}>
-          <CustomInput icon="mail-outline" placeholder="Correo electrónico" keyboardType="email-address" autoCapitalize="none" />
+          <CustomInput 
+            icon="mail-outline" 
+            placeholder="Correo electrónico" 
+            keyboardType="email-address" 
+            autoCapitalize="none" 
+            value={email}
+            onChangeText={setEmail}
+          />
         </View>
 
         <TouchableOpacity 
           style={styles.primaryButton} 
           activeOpacity={0.8}
-          onPress={() => router.push('/register/step3' as any)}
+          onPress={handleNext}
         >
           <Text style={styles.primaryButtonText}>Continuar</Text>
         </TouchableOpacity>

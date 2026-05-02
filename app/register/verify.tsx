@@ -1,16 +1,46 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInRight } from 'react-native-reanimated';
+import { auth } from '@/config/firebase';
+import { sendEmailVerification } from 'firebase/auth';
 
 const logoSource = require('@/assets/images/logo.png');
 const verifyImage = require('@/assets/images/sobreTick.png');
 
 export default function VerifyScreen() {
   const router = useRouter();
+  const [resending, setResending] = useState(false);
+
+  const handleResend = async () => {
+    if (auth.currentUser) {
+      setResending(true);
+      try {
+        await sendEmailVerification(auth.currentUser);
+        Alert.alert('Éxito', 'Correo de verificación reenviado.');
+      } catch (error: any) {
+        Alert.alert('Error', error.message);
+      } finally {
+        setResending(false);
+      }
+    }
+  };
+
+  const handleVerify = async () => {
+    if (auth.currentUser) {
+      await auth.currentUser.reload();
+      if (auth.currentUser.emailVerified) {
+        // TODO: Redirect to invite code screen once implemented.
+        // For now, redirecting to welcome screen.
+        router.replace('/welcome' as any);
+      } else {
+        Alert.alert('Atención', 'Aún no has verificado tu correo. Por favor, revisa tu bandeja de entrada o la carpeta de spam.');
+      }
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
@@ -44,14 +74,25 @@ export default function VerifyScreen() {
           <TouchableOpacity 
             style={styles.primaryButton} 
             activeOpacity={0.8}
-            onPress={() => router.navigate('/welcome' as any)}
+            onPress={handleVerify}
           >
             <Text style={styles.primaryButtonText}>He verificado mi correo</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.8}>
-            <Ionicons name="paper-plane-outline" size={20} color={Colors.light.primaryGreen} style={styles.buttonIcon} />
-            <Text style={styles.secondaryButtonText}>Reenviar correo</Text>
+          <TouchableOpacity 
+            style={styles.secondaryButton} 
+            activeOpacity={0.8}
+            onPress={handleResend}
+            disabled={resending}
+          >
+            {resending ? (
+              <ActivityIndicator color={Colors.light.primaryGreen} />
+            ) : (
+              <>
+                <Ionicons name="paper-plane-outline" size={20} color={Colors.light.primaryGreen} style={styles.buttonIcon} />
+                <Text style={styles.secondaryButtonText}>Reenviar correo</Text>
+              </>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.linkButton} activeOpacity={0.8}>

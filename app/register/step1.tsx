@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -11,6 +11,17 @@ const userImage = require('@/assets/images/user.png');
 
 export default function Step1Screen() {
   const router = useRouter();
+  const [firstName, setFirstName] = useState('');
+  const [lastName1, setLastName1] = useState('');
+  const [lastName2, setLastName2] = useState('');
+
+  const handleNext = () => {
+    if (!firstName.trim() || !lastName1.trim()) return; // Optionally add validation visual feedback
+    router.push({
+      pathname: '/register/step2',
+      params: { firstName: firstName.trim(), lastName1: lastName1.trim(), lastName2: lastName2.trim() }
+    });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
@@ -28,15 +39,15 @@ export default function Step1Screen() {
         </Text>
 
         <View style={styles.formContainer}>
-          <CustomInput icon="person-outline" placeholder="Nombre" />
-          <CustomInput icon="person-outline" placeholder="Primer apellido" />
-          <CustomInput icon="person-outline" placeholder="Segundo apellido" />
+          <CustomInput icon="person-outline" placeholder="Nombre" value={firstName} onChangeText={setFirstName} />
+          <CustomInput icon="person-outline" placeholder="Primer apellido" value={lastName1} onChangeText={setLastName1} />
+          <CustomInput icon="person-outline" placeholder="Segundo apellido" value={lastName2} onChangeText={setLastName2} />
         </View>
 
         <TouchableOpacity 
           style={styles.primaryButton} 
           activeOpacity={0.8}
-          onPress={() => router.push('/register/step2' as any)}
+          onPress={handleNext}
         >
           <Text style={styles.primaryButtonText}>Siguiente {'>'}</Text>
         </TouchableOpacity>
