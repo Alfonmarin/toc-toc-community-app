@@ -33,7 +33,11 @@ export default function WelcomeScreen() {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8}>
+        <TouchableOpacity 
+          style={styles.primaryButton} 
+          activeOpacity={0.8}
+          onPress={() => router.push('/login' as any)}
+        >
           <Ionicons name="lock-closed-outline" size={20} color="#fff" style={styles.buttonIcon} />
           <Text style={styles.primaryButtonText}>Iniciar sesión</Text>
         </TouchableOpacity>
