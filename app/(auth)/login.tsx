@@ -26,8 +26,14 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      // Temporary redirection until the actual tab layout or invite code screen is built
-      router.replace('/(tabs)' as any);
+      
+      // Temporary logic: if superadmin email, go to superadmin dashboard.
+      if (email.trim().toLowerCase() === 'admin@admin.com') {
+        router.replace('/(superadmin)/dashboard' as any);
+      } else {
+        // Otherwise go to tabs
+        router.replace('/(tabs)' as any);
+      }
     } catch (error: any) {
       console.error(error);
       Alert.alert('Error de inicio de sesión', 'Las credenciales son incorrectas o no existe el usuario.');
